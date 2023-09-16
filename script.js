@@ -1,4 +1,4 @@
-let numCartones;
+let numCuponazos;
 let cantidadIntroducida = false;
 
 console.log("BIENVENIDO AL SUPERCUPONAZO DE LA ONCE!");
@@ -11,25 +11,34 @@ document.addEventListener("keydown", introdCantidad);
 
 function introdCantidad(event) {
   let precio;
+  let contador = 0;
+  let completado = false;
 
   if (event.key === "Enter") {
     document.removeEventListener("keydown", introdCantidad);
 
     // Comprobar si el valor ingresado es numérico
     do {
-      numCartones = prompt("Introduzca una cantidad:");
-      if (!isNaN(numCartones) && numCartones !== null) {
-        console.log("De acuerdo, va a jugar " + numCartones + " cuponazos.");
-        precio = calcularPrecio(numCartones);
+      numCuponazos = prompt("Introduzca una cantidad:");
+      if (!isNaN(numCuponazos) && numCuponazos !== null) {
+        console.log("De acuerdo, va a jugar " + numCuponazos + " cuponazos.");
+        precio = calcularPrecio(numCuponazos);
         console.log("Serán un total de " + precio + "€.");
-        console.log("Pulse Enter para continuar");
+        console.log(
+          "Pulse Enter para proceder a elegir los números " +
+            "(" +
+            contador +
+            "/" +
+            numCuponazos +
+            "):"
+        );
         document.addEventListener("keydown", generacionDeNumeros);
       } else {
         console.log(
           "Por favor, introduzca una cantidad válida (solo números)."
         );
       }
-    } while (isNaN(numCartones) && numCartones !== null);
+    } while (isNaN(numCuponazos) && numCartones !== null);
   } else {
     console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
   }
@@ -43,6 +52,8 @@ function calcularPrecio(numCartones) {
 }
 
 function generacionDeNumeros(event) {
+  let allNumGenerated = false;
+
   if (event.key === "Enter") {
     document.removeEventListener("keydown", generacionDeNumeros);
     document.addEventListener("keydown", keydownHandlerNumberGenerationOption);
@@ -101,8 +112,8 @@ function generarNumPorSeleccion() {
 
   document.addEventListener("keydown", keydownPickingNumbers);
 }
-/*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/
 
+/*---------------------------------INICIO SELECCIÓN DE NÚMERO---------------------------------------------*/
 let numeros = new Array(10);
 for (let i = 0; i < numeros.length; i++) {
   numeros[i] = i;
@@ -176,7 +187,7 @@ function selectNumNormales(event, numIndice) {
     console.log("Numeros principales generados correctamente.");
     console.log("Número principal: " + numerosObtenidos);
     console.log(
-      "Su número de completo del cuponazo es el [" +
+      "Su número completo del cuponazo es el [" +
         numeroSerie +
         " " +
         numeroPrincipal +
@@ -193,5 +204,7 @@ function obtenerNumeros(numerosObtenidos) {
 
   return numerosString;
 }
+
+/*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/
 
 /*----------------------------FIN GENERACIÓN NÚMEROS-------------------------------------*/

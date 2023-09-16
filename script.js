@@ -1,6 +1,57 @@
-console.log("Para generar número aleatoriamente pulse 1.");
+let numCartones;
+let cantidadIntroducida = false;
 
-console.log("Para seleccionar los números de forma manual pulse 2.");
+console.log("BIENVENIDO AL SUPERCUPONAZO DE LA ONCE!");
+
+console.log("¡Empecemos!");
+
+console.log("¿Cuántos cuponazos quiere jugar?");
+console.log("Pulse Enter para introducir una cantidad: ");
+document.addEventListener("keydown", introdCantidad);
+
+function introdCantidad(event) {
+  let precio;
+
+  if (event.key === "Enter") {
+    document.removeEventListener("keydown", introdCantidad);
+
+    // Comprobar si el valor ingresado es numérico
+    do {
+      numCartones = prompt("Introduzca una cantidad:");
+      if (!isNaN(numCartones) && numCartones !== null) {
+        console.log("De acuerdo, va a jugar " + numCartones + " cuponazos.");
+        precio = calcularPrecio(numCartones);
+        console.log("Serán un total de " + precio + "€.");
+        console.log("Pulse Enter para continuar");
+        document.addEventListener("keydown", generacionDeNumeros);
+      } else {
+        console.log(
+          "Por favor, introduzca una cantidad válida (solo números)."
+        );
+      }
+    } while (isNaN(numCartones) && numCartones !== null);
+  } else {
+    console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
+  }
+}
+
+function calcularPrecio(numCartones) {
+  let cant = parseInt(numCartones);
+  let precio = cant * 3;
+
+  return precio;
+}
+
+function generacionDeNumeros(event) {
+  if (event.key === "Enter") {
+    document.removeEventListener("keydown", generacionDeNumeros);
+    document.addEventListener("keydown", keydownHandlerNumberGenerationOption);
+    console.log("Para generar número aleatoriamente pulse 1.");
+    console.log("Para seleccionar los números de forma manual pulse 2.");
+  } else {
+    console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
+  }
+}
 
 let numerosSerie = new Array(2);
 let numerosPrincipales = "";
@@ -9,8 +60,6 @@ let numerosPrincipalesString = "";
 let randomNum;
 let mensajeNumGenerado;
 
-document.addEventListener("keydown", keydownHandlerNumberGenerationOption);
-
 function keydownHandlerNumberGenerationOption(event) {
   if (event.key === "1" || event.key === "NumPad1") {
     generarNumAleatorio();
@@ -18,7 +67,6 @@ function keydownHandlerNumberGenerationOption(event) {
     generarNumPorSeleccion();
   }
 }
-
 
 /*---------------------INICIO GENERAR NÚMERO ALEATORIO--------------------------------------*/
 function generarNumAleatorio() {
@@ -47,31 +95,103 @@ function generarNumAleatorio() {
 function generarNumPorSeleccion() {
   document.removeEventListener("keydown", keydownHandlerNumberGenerationOption);
 
-  let numeros = new Array(10);
-  let index = 0;
-
   console.log("Ha elegido la selección manual.");
+
   console.log("Introduzca los 3 números pertenecientes a la serie:");
 
-  for (let i = 0; i < numeros.length; i++) {
-    numeros[i] = i;
-  }
-
-  /*Podemos crear un bucle (while) con un booleano que lo cierre, en el cual hasta que no se
-  obtengan los tres numeros de la serie y los 5 numeros normales, el bucle siga instando al usuario 
-  a introducir todos los numeros de manera correcta. Cuando esto se haya logrado cerraremos el 
-  addEventListener.*/
-
   document.addEventListener("keydown", keydownPickingNumbers);
-
-  function keydownPickingNumbers(event){
-    if (
-      event.key === index.toString() ||
-      event.key === "NumPad" + index.toString()
-    ) {
-      console.log(index);
-    }
-  }
-  
 }
 /*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/
+
+let numeros = new Array(10);
+for (let i = 0; i < numeros.length; i++) {
+  numeros[i] = i;
+}
+
+let numerosSeriePorSeleccion = new Array();
+let numerosPrincipalesPorSeleccion = new Array();
+let numerosObtenidos;
+let numSerieCompletado = false;
+let numeroSerie;
+let numeroPrincipal;
+
+function keydownPickingNumbers(event) {
+  let numIndice = numeros.indexOf(parseInt(event.key)); //Obtendrá la posición del array donde se encuentra el mismo "key" de la tecla pulsada. Si esta no correstponde a ningún número nos dará -1.
+
+  if (!numSerieCompletado) {
+    selectNumSerie(event, numIndice);
+  } else {
+    selectNumNormales(event, numIndice);
+  }
+}
+
+function selectNumSerie(event, numIndice) {
+  if (numerosSeriePorSeleccion.length < 3) {
+    if (
+      //Si la tecla pulsada coincide con uno de los números del array (en este caso, su índice) la condición será cierta. Habrá encontrado el número.
+      event.key === numIndice.toString() ||
+      event.key === "NumPad" + numIndice.toString()
+    ) {
+      numerosSeriePorSeleccion.push(numIndice);
+      numerosObtenidos = obtenerNumeros(numerosSeriePorSeleccion);
+      numeroSerie = numerosObtenidos;
+      console.log(numerosObtenidos);
+    } else {
+      console.log(
+        "La tecla seleccionada no es un número.\n" +
+          "Inserte un número, por favor."
+      );
+    }
+  }
+
+  if (numerosSeriePorSeleccion.length === 3) {
+    console.log("Serie generada correctamente.");
+    console.log("Número de serie: " + numerosObtenidos);
+    console.log("Introduzca ahora los 5 números principales:");
+    numSerieCompletado = true;
+  }
+}
+
+function selectNumNormales(event, numIndice) {
+  if (numerosPrincipalesPorSeleccion.length < 5) {
+    if (
+      //Si la tecla pulsada coincide con uno de los números del array (en este caso, su índice) la condición será cierta. Habrá encontrado el número.
+      event.key === numIndice.toString() ||
+      event.key === "NumPad" + numIndice.toString()
+    ) {
+      numerosPrincipalesPorSeleccion.push(numIndice);
+      numerosObtenidos = obtenerNumeros(numerosPrincipalesPorSeleccion);
+      numeroPrincipal = numerosObtenidos;
+      console.log(numerosObtenidos);
+    } else {
+      console.log(
+        "La tecla seleccionada no es un número.\n" +
+          "Inserte un número, por favor."
+      );
+    }
+  }
+
+  if (numerosPrincipalesPorSeleccion.length === 5) {
+    document.removeEventListener("keydown", keydownPickingNumbers);
+    console.log("Numeros principales generados correctamente.");
+    console.log("Número principal: " + numerosObtenidos);
+    console.log(
+      "Su número de completo del cuponazo es el [" +
+        numeroSerie +
+        " " +
+        numeroPrincipal +
+        "]"
+    );
+  }
+}
+
+function obtenerNumeros(numerosObtenidos) {
+  let numerosString = "";
+  for (let i in numerosObtenidos) {
+    numerosString += numerosObtenidos[i];
+  }
+
+  return numerosString;
+}
+
+/*----------------------------FIN GENERACIÓN NÚMEROS-------------------------------------*/

@@ -1,4 +1,6 @@
 let numCuponazos;
+let numerosTotales = new Array();
+
 let cantidadIntroducida = false;
 
 console.log("BIENVENIDO AL SUPERCUPONAZO DE LA ONCE!");
@@ -11,7 +13,6 @@ document.addEventListener("keydown", introdCantidad);
 
 function introdCantidad(event) {
   let precio;
-  let contador = 0;
   let completado = false;
 
   if (event.key === "Enter") {
@@ -26,9 +27,7 @@ function introdCantidad(event) {
         console.log("Serán un total de " + precio + "€.");
         console.log(
           "Pulse Enter para proceder a elegir los números " +
-            "(" +
-            contador +
-            "/" +
+            "(0/" +
             numCuponazos +
             "):"
         );
@@ -38,22 +37,20 @@ function introdCantidad(event) {
           "Por favor, introduzca una cantidad válida (solo números)."
         );
       }
-    } while (isNaN(numCuponazos) && numCartones !== null);
+    } while (isNaN(numCuponazos) && numCuponazos !== null);
   } else {
     console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
   }
 }
 
-function calcularPrecio(numCartones) {
-  let cant = parseInt(numCartones);
+function calcularPrecio(numCuponazos) {
+  let cant = parseInt(numCuponazos);
   let precio = cant * 3;
 
   return precio;
 }
 
 function generacionDeNumeros(event) {
-  let allNumGenerated = false;
-
   if (event.key === "Enter") {
     document.removeEventListener("keydown", generacionDeNumeros);
     document.addEventListener("keydown", keydownHandlerNumberGenerationOption);
@@ -99,6 +96,13 @@ function generarNumAleatorio() {
   console.log(
     mensajeNumGenerado + numerosSerieString + " " + numerosPrincipalesString
   );
+
+  numerosTotales.push(numerosSerieString + " " + numerosPrincipalesString);
+  console.log("Pulse Enter para generar el siguiente número.");
+  console.log("Tus números: ");
+  for (let i in numerosTotales) {
+    console.log(numerosTotales[i]);
+  }
 }
 /*---------------------FIN GENERAR NÚMERO ALEATORIO--------------------------------------*/
 
@@ -193,6 +197,10 @@ function selectNumNormales(event, numIndice) {
         numeroPrincipal +
         "]"
     );
+    numerosTotales.push(numeroSerie + " " + numeroPrincipal);
+    do {
+      procederSiguienteNumero();
+    } while (numerosTotales < numCuponazos);
   }
 }
 
@@ -203,6 +211,34 @@ function obtenerNumeros(numerosObtenidos) {
   }
 
   return numerosString;
+}
+
+function procederSiguienteNumero() {
+  let introTeclado = prompt(
+    "Introduzca 's' para generar el siguiente número (" +
+      numerosTotales.length +
+      "/" +
+      numCuponazos +
+      ")"
+  ); 
+  
+  do{
+    if(introTeclado === "s"){
+      generarNumAleatorio();
+    }else{
+      introTeclado = prompt(
+        "Error. Por favor, introduzca 's' para generar el siguiente número (" +
+          numerosTotales.length +
+          "/" +
+          numCuponazos +
+          ")"
+      ); 
+      if(introTeclado === "s"){
+        generarNumAleatorio();
+      }
+    }
+  }while(introTeclado !== "s");
+
 }
 
 /*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/

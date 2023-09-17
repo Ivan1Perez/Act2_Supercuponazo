@@ -61,13 +61,6 @@ function generacionDeNumeros(event) {
   }
 }
 
-let numerosSerie = new Array(2);
-let numerosPrincipales = "";
-let numerosSerieString = "";
-let numerosPrincipalesString = "";
-let randomNum;
-let mensajeNumGenerado;
-
 function keydownHandlerNumberGenerationOption(event) {
   if (event.key === "1" || event.key === "NumPad1") {
     generarNumAleatorio();
@@ -78,6 +71,13 @@ function keydownHandlerNumberGenerationOption(event) {
 
 /*---------------------INICIO GENERAR NÚMERO ALEATORIO--------------------------------------*/
 function generarNumAleatorio() {
+  let numerosSerie = new Array(2);
+  let numerosSerieString = "";
+  let numerosPrincipales = new Array(4);
+  let numerosPrincipalesString = "";
+  let randomNum;
+  let mensajeNumGenerado;
+
   document.removeEventListener("keydown", keydownHandlerNumberGenerationOption);
 
   mensajeNumGenerado = "El número generado es: ";
@@ -98,10 +98,13 @@ function generarNumAleatorio() {
   );
 
   numerosTotales.push(numerosSerieString + " " + numerosPrincipalesString);
-  console.log("Pulse Enter para generar el siguiente número.");
   console.log("Tus números: ");
   for (let i in numerosTotales) {
     console.log(numerosTotales[i]);
+  }
+
+  if (numerosTotales.length < parseInt(numCuponazos)) {
+    procederSiguienteNumero();
   }
 }
 /*---------------------FIN GENERAR NÚMERO ALEATORIO--------------------------------------*/
@@ -123,12 +126,11 @@ for (let i = 0; i < numeros.length; i++) {
   numeros[i] = i;
 }
 
+let numeroSerie;
 let numerosSeriePorSeleccion = new Array();
 let numerosPrincipalesPorSeleccion = new Array();
 let numerosObtenidos;
 let numSerieCompletado = false;
-let numeroSerie;
-let numeroPrincipal;
 
 function keydownPickingNumbers(event) {
   let numIndice = numeros.indexOf(parseInt(event.key)); //Obtendrá la posición del array donde se encuentra el mismo "key" de la tecla pulsada. Si esta no correstponde a ningún número nos dará -1.
@@ -136,11 +138,13 @@ function keydownPickingNumbers(event) {
   if (!numSerieCompletado) {
     selectNumSerie(event, numIndice);
   } else {
-    selectNumNormales(event, numIndice);
+    selectNumNormales(event, numIndice, numeroSerie);
   }
 }
 
 function selectNumSerie(event, numIndice) {
+  numeroSerie = "";
+
   if (numerosSeriePorSeleccion.length < 3) {
     if (
       //Si la tecla pulsada coincide con uno de los números del array (en este caso, su índice) la condición será cierta. Habrá encontrado el número.
@@ -167,7 +171,9 @@ function selectNumSerie(event, numIndice) {
   }
 }
 
-function selectNumNormales(event, numIndice) {
+function selectNumNormales(event, numIndice, numeroSerie) {
+  let numeroPrincipal;
+
   if (numerosPrincipalesPorSeleccion.length < 5) {
     if (
       //Si la tecla pulsada coincide con uno de los números del array (en este caso, su índice) la condición será cierta. Habrá encontrado el número.
@@ -188,6 +194,7 @@ function selectNumNormales(event, numIndice) {
 
   if (numerosPrincipalesPorSeleccion.length === 5) {
     document.removeEventListener("keydown", keydownPickingNumbers);
+    numSerieCompletado = false;
     console.log("Numeros principales generados correctamente.");
     console.log("Número principal: " + numerosObtenidos);
     console.log(
@@ -198,9 +205,15 @@ function selectNumNormales(event, numIndice) {
         "]"
     );
     numerosTotales.push(numeroSerie + " " + numeroPrincipal);
-    do {
+    console.log("Tus números: ");
+    for (let i in numerosTotales) {
+      console.log(numerosTotales[i]);
+    }
+    numerosSeriePorSeleccion = new Array();
+    numerosPrincipalesPorSeleccion = new Array();
+    if (numerosTotales.length < parseInt(numCuponazos)) {
       procederSiguienteNumero();
-    } while (numerosTotales < numCuponazos);
+    }
   }
 }
 
@@ -213,34 +226,44 @@ function obtenerNumeros(numerosObtenidos) {
   return numerosString;
 }
 
+/*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/
+
 function procederSiguienteNumero() {
+  let msjFormaAleatoria =
+    "- Introduzca 's' para generar el siguiente número de forma aleatoria.";
+  let msjFormalManual =
+    "- Introduzca 'm' para seleccionar el siguiente número de forma manual.";
+  let msjNumCompletados =
+    "Números completados: (" + numerosTotales.length + "/" + numCuponazos + ")";
   let introTeclado = prompt(
-    "Introduzca 's' para generar el siguiente número (" +
-      numerosTotales.length +
-      "/" +
-      numCuponazos +
-      ")"
-  ); 
-  
-  do{
-    if(introTeclado === "s"){
+    "Opciones:\n" +
+      msjFormaAleatoria +
+      "\n" +
+      msjFormalManual +
+      "\n" +
+      msjNumCompletados
+  );
+
+  do {
+    if (introTeclado === "s") {
       generarNumAleatorio();
-    }else{
+    } else if (introTeclado === "m") {
+      generarNumPorSeleccion();
+    } else {
       introTeclado = prompt(
-        "Error. Por favor, introduzca 's' para generar el siguiente número (" +
+        "Error. Por favor, introduzca 's' o 'm' para generar el siguiente número (" +
           numerosTotales.length +
           "/" +
           numCuponazos +
           ")"
-      ); 
-      if(introTeclado === "s"){
+      );
+      if (introTeclado === "s") {
         generarNumAleatorio();
+      } else if (introTeclado === "m") {
+        generarNumPorSeleccion();
       }
     }
-  }while(introTeclado !== "s");
-
+  } while (introTeclado !== "s" && introTeclado !== "m");
 }
-
-/*---------------------FIN GENERAR NÚMERO POR SELECCIÓN--------------------------------------*/
 
 /*----------------------------FIN GENERACIÓN NÚMEROS-------------------------------------*/

@@ -1,5 +1,6 @@
 let numCuponazos;
 let numerosTotales = new Array();
+let costeTotal;
 
 let cantidadIntroducida = false;
 
@@ -12,9 +13,6 @@ console.log("Pulse Enter para introducir una cantidad: ");
 document.addEventListener("keydown", introdCantidad);
 
 function introdCantidad(event) {
-  let precio;
-  let completado = false;
-
   if (event.key === "Enter") {
     document.removeEventListener("keydown", introdCantidad);
 
@@ -23,8 +21,8 @@ function introdCantidad(event) {
       numCuponazos = prompt("Introduzca una cantidad:");
       if (!isNaN(numCuponazos) && numCuponazos !== null) {
         console.log("De acuerdo, va a jugar " + numCuponazos + " cuponazos.");
-        precio = calcularPrecio(numCuponazos);
-        console.log("Serán un total de " + precio + "€.");
+        costeTotal = calcularPrecio(numCuponazos);
+        console.log("Serán un total de " + costeTotal + "€.");
         console.log(
           "Pulse Enter para proceder a elegir los números " +
             "(0/" +
@@ -45,9 +43,9 @@ function introdCantidad(event) {
 
 function calcularPrecio(numCuponazos) {
   let cant = parseInt(numCuponazos);
-  let precio = cant * 3;
+  let costeTotal = cant * 3;
 
-  return precio;
+  return costeTotal;
 }
 
 function generacionDeNumeros(event) {
@@ -68,6 +66,8 @@ function keydownHandlerNumberGenerationOption(event) {
     generarNumPorSeleccion();
   }
 }
+
+let allNumGenerated = false;
 
 /*---------------------INICIO GENERAR NÚMERO ALEATORIO--------------------------------------*/
 function generarNumAleatorio() {
@@ -105,6 +105,8 @@ function generarNumAleatorio() {
 
   if (numerosTotales.length < parseInt(numCuponazos)) {
     procederSiguienteNumero();
+  } else {
+    generarSorteos();
   }
 }
 /*---------------------FIN GENERAR NÚMERO ALEATORIO--------------------------------------*/
@@ -213,6 +215,8 @@ function selectNumNormales(event, numIndice, numeroSerie) {
     numerosPrincipalesPorSeleccion = new Array();
     if (numerosTotales.length < parseInt(numCuponazos)) {
       procederSiguienteNumero();
+    } else {
+      generarSorteos();
     }
   }
 }
@@ -230,7 +234,7 @@ function obtenerNumeros(numerosObtenidos) {
 
 function procederSiguienteNumero() {
   let msjFormaAleatoria =
-    "- Introduzca 's' para generar el siguiente número de forma aleatoria.";
+    "- Introduzca 'a' para generar el siguiente número de forma aleatoria.";
   let msjFormalManual =
     "- Introduzca 'm' para seleccionar el siguiente número de forma manual.";
   let msjNumCompletados =
@@ -244,26 +248,144 @@ function procederSiguienteNumero() {
       msjNumCompletados
   );
 
+  opcionAleatorioManual(introTeclado);
+}
+/*----------------------------FIN GENERACIÓN NÚMEROS-------------------------------------*/
+
+function opcionAleatorioManual(introTeclado) {
   do {
-    if (introTeclado === "s") {
+    if (introTeclado === "a") {
       generarNumAleatorio();
     } else if (introTeclado === "m") {
       generarNumPorSeleccion();
     } else {
       introTeclado = prompt(
-        "Error. Por favor, introduzca 's' o 'm' para generar el siguiente número (" +
+        "Error. Por favor, introduzca 'a' o 'm' para generar el siguiente número (" +
           numerosTotales.length +
           "/" +
           numCuponazos +
           ")"
       );
-      if (introTeclado === "s") {
+      if (introTeclado === "a") {
         generarNumAleatorio();
       } else if (introTeclado === "m") {
         generarNumPorSeleccion();
       }
     }
-  } while (introTeclado !== "s" && introTeclado !== "m");
+  } while (introTeclado !== "a" && introTeclado !== "m");
 }
 
-/*----------------------------FIN GENERACIÓN NÚMEROS-------------------------------------*/
+/*--------------------------------INICIO NÚMERO DE SORTEOS---------------------------------*/
+
+function generarSorteos() {
+  console.log("Pulse Enter para elegir el número de sorteos: ");
+  document.addEventListener("keydown", introNumSorteos);
+
+  function introNumSorteos(event) {
+    if (event.key === "Enter") {
+      document.removeEventListener("keydown", introNumSorteos);
+
+      comprobacionCantidadSorteos();
+    } else {
+      console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
+    }
+  }
+
+  let cantidadSorteos;
+  function comprobacionCantidadSorteos() {
+    do {
+      cantidadSorteos = prompt("Introduzca la cantidad de sorteos a jugar:");
+      if (!isNaN(cantidadSorteos) && cantidadSorteos !== null) {
+        console.log(
+          "De acuerdo, se van a jugar " + cantidadSorteos + " sorteos."
+        );
+      } else {
+        console.log(
+          "Por favor, introduzca una cantidad válida (solo números)."
+        );
+      }
+    } while (isNaN(cantidadSorteos) && cantidadSorteos !== null);
+
+    costeTotal = costeTotal + (cantidadSorteos * 3);
+
+    console.log("El coste total asciende a " + costeTotal + "€.");
+    console.log("Pulse Enter para proceder con la simulación de sorteos.");
+    document.addEventListener("keydown", enterSimularSorteos);
+  }
+}
+
+/*--------------------------------FIN NÚMERO DE SORTEOS---------------------------------*/
+
+/*--------------------------------INICIO SIMULACIÓN DE SORTEOS---------------------------------*/
+
+function enterSimularSorteos(event) {
+  if (event.key === "Enter") {
+    document.removeEventListener("keydown", enterSimularSorteos);
+
+    opcionMismoNum_AleatorioPrompt();
+  } else {
+    console.log("Por favor, ha de pulsar la tecla Enter para continuar.");
+  }
+}
+
+function opcionMismoNum_AleatorioPrompt() {
+  let opcion1_2 = 0;
+
+  if (numerosTotales.length > 1) {
+    opcion1_2 = prompt(
+      "Jugar siempre con el mismo número → Pulse [1]" +
+        "\nGenerar número aleatorio para cada sorteo → Pulse [2]"
+    );
+  } else {
+    opcion1_2 = prompt(
+      "Jugar siempre con los mismos números → Pulse [1]" +
+        "\nGenerar números aleatorios para cada sorteo → Pulse [2]"
+    );
+  }
+
+  opcionMismoNum_Aleatorio(opcion1_2);
+}
+
+function opcionMismoNum_Aleatorio(introTeclado) {
+  do {
+    if (introTeclado === "1") {
+      //Función para jugar siempre con el mismo número.
+      simularSorteoSiempreMismoNumero();
+    } else if (introTeclado === "2") {
+      //Función para jugar con números aleatorios cada sorteo.
+      //simularSorteoNumAleatorios
+    } else {
+      introTeclado = prompt(
+        "Error. Por favor, introduzca '1' o '2' para continuar."
+      );
+      if (introTeclado === "1") {
+        //Función para jugar siempre con el mismo número.
+      } else if (introTeclado === "2") {
+        //Función para jugar con números aleatorios cada sorteo.
+      }
+    }
+  } while (introTeclado !== "1" && introTeclado !== "2");
+}
+
+function simularSorteoSiempreMismoNumero() {
+  let seriePremiada = new Array();
+  let seriePremiadaString = "";
+  let numPrincipalesPremiado = new Array();
+  let numPremiado;
+  
+  for(let i = 0; i < 3; i++){
+    randomNum = Math.floor(Math.random() * 10);
+    seriePremiada[i] = randomNum;
+    seriePremiadaString += seriePremiada[i].toString();
+  }
+
+  numPremiado = seriePremiadaString;
+
+  for(let i = 0; i < 5; i++){
+    numPrincipalesPremiado[i] = Math.floor(Math.random() * 10);
+  }
+
+
+  console.log
+}
+/*--------------------------------FIN SIMULACIÓN DE SORTEOS---------------------------------*/

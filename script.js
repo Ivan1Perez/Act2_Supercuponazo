@@ -1,8 +1,7 @@
 let numCuponazos;
 let numerosTotales = new Array();
 let costeTotal;
-
-let cantidadIntroducida = false;
+let cantidadSorteos = "";
 
 console.log("BIENVENIDO AL SUPERCUPONAZO DE LA ONCE!");
 
@@ -291,11 +290,11 @@ function generarSorteos() {
     }
   }
 
-  let cantidadSorteos;
   function comprobacionCantidadSorteos() {
+    //let cantidadSorteos = "";
     do {
       cantidadSorteos = prompt("Introduzca la cantidad de sorteos a jugar:");
-      if (!isNaN(cantidadSorteos) && cantidadSorteos !== null) {
+      if (!isNaN(parseInt(cantidadSorteos))) {
         console.log(
           "De acuerdo, se van a jugar " + cantidadSorteos + " sorteos."
         );
@@ -304,11 +303,12 @@ function generarSorteos() {
           "Por favor, introduzca una cantidad válida (solo números)."
         );
       }
-    } while (isNaN(cantidadSorteos) && cantidadSorteos !== null);
+    } while (isNaN(parseInt(cantidadSorteos)));
 
-    costeTotal = costeTotal + (cantidadSorteos * 3);
+    costeTotal = numCuponazos * cantidadSorteos * 3;
 
     console.log("El coste total asciende a " + costeTotal + "€.");
+    console.log(cantidadSorteos);
     console.log("Pulse Enter para proceder con la simulación de sorteos.");
     document.addEventListener("keydown", enterSimularSorteos);
   }
@@ -343,6 +343,9 @@ function opcionMismoNum_AleatorioPrompt() {
     );
   }
 
+  console.clear();
+  console.log("Simulación de sorteos:");
+
   opcionMismoNum_Aleatorio(opcion1_2);
 }
 
@@ -368,24 +371,46 @@ function opcionMismoNum_Aleatorio(introTeclado) {
 }
 
 function simularSorteoSiempreMismoNumero() {
-  let seriePremiada = new Array();
-  let seriePremiadaString = "";
-  let numPrincipalesPremiado = new Array();
+  let seriePremiada;
+  let seriePremiadaString;
+  let numPrincipalesPremiado;
+  let numPrincipalesPremiadoString;
   let numPremiado;
+  let numPremiadoString = "";
+  let cuponazoAcertado = false;
+  let index;
+
+  do{
+    seriePremiada = new Array();
+    seriePremiadaString = "";
+    numPrincipalesPremiado = new Array();
+    numPrincipalesPremiadoString = "";
+
+
+    for (let i = 0; i < 3; i++) {
+      randomNum = Math.floor(Math.random() * 10);
+      seriePremiada[i] = randomNum;
+      seriePremiadaString += randomNum.toString();
+    }
   
-  for(let i = 0; i < 3; i++){
-    randomNum = Math.floor(Math.random() * 10);
-    seriePremiada[i] = randomNum;
-    seriePremiadaString += seriePremiada[i].toString();
+    for (let i = 0; i < 5; i++) {
+      randomNum = Math.floor(Math.random() * 10);
+      numPrincipalesPremiado[i] = randomNum;
+      numPrincipalesPremiadoString += randomNum.toString();
+    }
+  
+    numPremiadoString = seriePremiadaString + " " + numPrincipalesPremiadoString;
+    numPremiado = parseInt(seriePremiadaString + numPrincipalesPremiado);
+  
+    console.log("El número premiado es el: " + numPremiadoString);
+
+    index++;
+  }while(numPremiadoString !== numerosTotales[index] && index < cantidadSorteos);
+  
+  if(numPremiadoString === numerosTotales[index] ){
+    cuponazoAcertado = true;
   }
-
-  numPremiado = seriePremiadaString;
-
-  for(let i = 0; i < 5; i++){
-    numPrincipalesPremiado[i] = Math.floor(Math.random() * 10);
-  }
-
-
-  console.log
+  return cuponazoAcertado;
 }
+
 /*--------------------------------FIN SIMULACIÓN DE SORTEOS---------------------------------*/

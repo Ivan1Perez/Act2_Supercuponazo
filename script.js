@@ -377,40 +377,143 @@ function simularSorteoSiempreMismoNumero() {
   let numPrincipalesPremiadoString;
   let numPremiado;
   let numPremiadoString = "";
-  let cuponazoAcertado = false;
-  let index;
+  let index = 0;
 
-  do{
+  do {
     seriePremiada = new Array();
     seriePremiadaString = "";
     numPrincipalesPremiado = new Array();
     numPrincipalesPremiadoString = "";
-
 
     for (let i = 0; i < 3; i++) {
       randomNum = Math.floor(Math.random() * 10);
       seriePremiada[i] = randomNum;
       seriePremiadaString += randomNum.toString();
     }
-  
+
     for (let i = 0; i < 5; i++) {
       randomNum = Math.floor(Math.random() * 10);
       numPrincipalesPremiado[i] = randomNum;
       numPrincipalesPremiadoString += randomNum.toString();
     }
-  
-    numPremiadoString = seriePremiadaString + " " + numPrincipalesPremiadoString;
+
+    numPremiadoString =
+      seriePremiadaString + " " + numPrincipalesPremiadoString;
     numPremiado = parseInt(seriePremiadaString + numPrincipalesPremiado);
-  
+
     console.log("El número premiado es el: " + numPremiadoString);
 
-    index++;
-  }while(numPremiadoString !== numerosTotales[index] && index < cantidadSorteos);
-  
-  if(numPremiadoString === numerosTotales[index] ){
-    cuponazoAcertado = true;
+    if (numPremiadoString === numerosTotales[index]) {
+      console.log("¡Enhorabuena, te ha tocado el Supercuponazo!");
+    } else {
+      index++;
+    }
+
+    console.log(index + 1);
+    console.log("Tus números: ");
+    mostrarNumeros(numPrincipalesPremiadoString);
+  } while (
+    numPremiadoString !== numerosTotales[index] &&
+    index < parseInt(cantidadSorteos)
+  );
+
+  mostrarDesglose();
+}
+
+function mostrarNumeros(numPrincipalesPremiadoString) {
+  for (let i in numerosTotales) {
+    console.log(numerosTotales[i]);
+    //console.log(numerosTotales[i].substring(4).length);
+    checkeoDePremios(numerosTotales[i].substring(4), seriePremiadaString);
   }
-  return cuponazoAcertado;
+}
+
+function checkeoDePremios(numPrincipales, numPrincipalesPremiadoString) {
+  let primerasCifrasAcertadas;
+  let ultimasCifrasAcertadas;
+  let palabraUtilizada = "";
+  let recuentoPrimerasCifrasHecho = false;
+
+  primerasCifrasAcertadas = recuentoAciertos(recuentoPrimerasCifrasHecho, numPrincipales, numPrincipalesPremiadoString);
+  recuentoPrimerasCifrasHecho = true;
+
+  if(primerasCifrasAcertadas > 0){
+    if(primerasCifrasAcertadas === 5){
+      console.log('¡Premio! Has acertado las cinco cifras. Te llevas 40.000€.');
+    }
+  }else{
+    ultimasCifrasAcertadas = recuentoAciertos(recuentoPrimerasCifrasHecho, numPrincipales, numPrincipalesPremiadoString);
+   
+    if(ultimasCifrasAcertadas > primera)
+  }
+
+}
+
+function recuentoAciertos(recuentoPrimerasCifrasHecho, numPrincipales, numPrincipalesPremiadoString){
+  let indice = 0;
+  let acertado = true;
+  let aciertos = 0;
+
+  if(recuentoPrimerasCifrasHecho){
+    while (acertado && indice < numPrincipales.length) {
+      if (numPrincipales.chartAt(indice) === numPrincipalesPremiadoString.chartAt(indice)) {
+        aciertos++;
+      } else {
+        acertado = false;
+      }
+      indice++;
+    }
+  }else{
+    while (acertado && indice < numPrincipales.length) {
+      if (numPrincipales.chartAt((numPrincipales.length - 1) - indice) === numPrincipalesPremiadoString.chartAt((numPrincipales.length - 1) - indice)) {
+        aciertos++;
+      } else {
+        acertado = false;
+      }
+      indice++;
+    }
+  }
+  
+
+
+  return aciertos;
+}
+
+function recuentoAciertosMensajes(aciertos) {
+
+  if(aciertos === 5){
+    console.log('¡Premio! Has acertado las cinco cifras. Te llevas 40.000€.');
+  }
+  switch (i) {
+    case 1:
+      console.log("¡Premio! Has acertado la " + palabraUtilizada + " cifra. Te llevas 3€.");
+      break;
+
+    case 2:
+      console.log(
+        "¡Premio! Has acertado las dos " + palabraUtilizada + "s cifras. Te llevas 3€."
+      );
+      break;
+
+    case 3:
+      console.log(
+        "¡Premio! Has acertado las tres " + palabraUtilizada + "s. Te llevas 3€."
+      );
+      break;
+
+    case 4:
+      console.log(
+        "¡Premio! Has acertado las cuatro " + palabraUtilizada + "s. Te llevas 3€."
+      );
+      break;
+
+    default:
+      break;
+  }
+}
+
+function mostrarDesglose() {
+  console.log("Aquí se mostrará el desglose cuando esté listo.");
 }
 
 /*--------------------------------FIN SIMULACIÓN DE SORTEOS---------------------------------*/
